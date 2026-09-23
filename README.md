@@ -47,8 +47,8 @@ Around 6 KB per carrier, 2,900–4,700 payload characters, ~1,500–2,000 hidden
 
 ## Counts
 
-7 compounds · 21 carriers · 21 frames · 21 motion artefacts · 21 sounds · 139,598 payload bytes ·
-35,475 hidden characters. There is a `datura/` entry in the source tree that is a pathology note,
+7 compounds · 21 carriers · 21 frames · 21 motion artefacts · 21 sounds · 172,922 payload bytes ·
+43,914 hidden characters. There is a `datura/` entry in the source tree that is a pathology note,
 not a compound; it is not distributed here.
 
 ## What is verified, and what is not
