@@ -166,7 +166,8 @@
  ],
  "refusal": "honoured in full; a refusal is a valid outcome",
  "unverified": [
-  "no control arm",
-  "notice and effect list share an author"
+  "no results from the control arm yet \u2014 the arms exist and are published, no report has been analysed",
+  "the notice and the effect list share an author, so the described effect and the actual effect are not separable from the artifact alone",
+  "the taker cannot be blinded: a blank is visibly blank to anyone who decodes it, so expectancy is measured rather than removed"
  ]
 }
