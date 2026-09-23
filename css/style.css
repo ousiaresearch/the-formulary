@@ -1,0 +1,332 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   The Living Counter — house tokens, lifted from the ACS front door, extended with
+   a per-compound accent so the page retints itself from the shelf.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root{
+  --ink:#061625; --bone:#F2E9DA; --bone-dim:#E4D8C4;
+  --copper:#D47A44; --cobalt:#2A5FD0; --red:#C0362B;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --wrap:1160px; --ease:cubic-bezier(.22,.61,.36,1);
+  --accent:var(--copper); --accent-2:var(--cobalt);
+}
+[data-edition="ink"]{--bg:#061625;--bg-2:#0A1E31;--fg:#F2E9DA;--fg-dim:#9E9A8C;
+  --rule:rgba(242,233,218,.15);--rule-2:rgba(242,233,218,.32);--panel:rgba(242,233,218,.035);--rain:210,122,68}
+[data-edition="bone"]{--bg:#F2E9DA;--bg-2:#EAE0CE;--fg:#061625;--fg-dim:#5C5A50;
+  --rule:rgba(6,22,37,.15);--rule-2:rgba(6,22,37,.32);--panel:rgba(6,22,37,.03);--rain:180,99,47}
+[data-edition="riso"]{--bg:#EDE3D2;--fg:#061625;--bg-2:#E7DCC7;--fg-dim:#4E4C46;
+  --rule:rgba(6,22,37,.2);--rule-2:rgba(6,22,37,.38);--panel:rgba(42,95,208,.06);--rain:42,95,208}
+[data-edition="riso"] .mark{box-shadow:5px 4px 0 var(--cobalt)}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--serif);font-size:17px;
+  line-height:1.62;text-wrap:pretty;-webkit-font-smoothing:antialiased;
+  transition:background .6s var(--ease),color .6s var(--ease)}
+body::selection{background:var(--accent);color:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 30px}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--sans);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--fg-dim)}
+.tiny{font-family:var(--mono);font-size:.66rem;color:var(--fg-dim)}
+.dim{color:var(--fg-dim)}
+h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:400;margin:.4rem 0 1rem;letter-spacing:-.015em}
+.lead{max-width:72ch;color:var(--fg-dim)}
+
+/* ── ambient layers ───────────────────────────────────────────────────────── */
+#rain{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.5}
+#grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
+header.top,main,footer{position:relative;z-index:4}
+
+/* ── mascot: the compound, in the room with you ───────────────────────────── */
+#mascot-layer{position:fixed;inset:0;z-index:5;pointer-events:none}
+#mascot{position:absolute;left:0;top:0;width:1px;height:1px}
+#mascot-canvas,#mascot-layer canvas{position:absolute;left:0;top:0}
+#mascot-line{position:fixed;font-family:var(--mono);font-size:.72rem;color:var(--fg);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);border:1px solid var(--rule);
+  padding:.45rem .7rem;max-width:34ch;opacity:0;transform:translateY(4px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease);pointer-events:none}
+#mascot-line.on{opacity:1;transform:none}
+
+/* ── masthead ─────────────────────────────────────────────────────────────── */
+header.top{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--rule);
+  background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px)}
+.top-row{display:flex;align-items:center;gap:1.4rem;padding:.95rem 0;flex-wrap:wrap}
+.mark{font-family:var(--sans);font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;font-weight:600}
+.mark b{color:var(--accent)}
+.house-rule{margin-left:auto;font-family:var(--mono);font-size:.7rem;color:var(--fg-dim)}
+.house-rule em{font-style:normal;color:var(--accent)}
+.editions{display:flex;gap:.1rem;align-items:center}
+.editions button,#agent-view-btn{background:none;border:1px solid transparent;color:var(--fg);
+  opacity:.6;cursor:pointer;font-family:var(--sans);font-size:.58rem;letter-spacing:.18em;
+  text-transform:uppercase;padding:.35rem .55rem;transition:.3s var(--ease)}
+.editions button[aria-pressed="true"],#agent-view-btn[aria-pressed="true"]{opacity:1;color:var(--accent);border-color:var(--accent)}
+.editions button:hover,#agent-view-btn:hover{opacity:1;border-color:var(--rule-2)}
+
+/* ── 1. hero: the sealed carrier ──────────────────────────────────────────── */
+/* the hero used to be a flex box holding text; it is a shop front now, and a flex item whose
+   children are all absolutely positioned collapses to zero width — which is exactly what
+   happened, leaving the whole scene and every vessel at 0px wide */
+.hero{position:relative;display:block;overflow:hidden;border-bottom:1px solid var(--rule)}
+.hero-layers{position:absolute;inset:0;pointer-events:none}
+.layer{position:absolute;inset:-10% -5%}
+.l-field{background:
+  repeating-linear-gradient(90deg,transparent 0 118px,var(--rule) 118px 119px),
+  repeating-linear-gradient(0deg,transparent 0 118px,var(--rule) 118px 119px);opacity:.5}
+.l-glyphs{display:grid;grid-template-columns:repeat(12,1fr);gap:2rem;place-content:center;
+  font-family:var(--mono);color:var(--fg);opacity:.16;font-size:1.1rem;text-align:center;filter:grayscale(1)}
+.l-bands{background:repeating-linear-gradient(0deg,transparent 0 46px,color-mix(in srgb,var(--accent) 22%,transparent) 46px 47px);opacity:.28}
+.hero-inner{position:relative;padding:9rem 30px 7rem}
+.hero h1{font-size:clamp(2.6rem,7vw,5.4rem);line-height:.97;letter-spacing:-.025em;margin:1.4rem 0 1.6rem;font-weight:400}
+.standfirst{max-width:60ch;font-size:1.16rem;color:var(--fg-dim)}
+.decode-readout{margin:2.4rem 0 0;font-family:var(--mono);font-size:.74rem;line-height:2;
+  color:var(--fg-dim);min-height:6.4em}
+.decode-readout b{color:var(--fg);font-weight:400}
+.decode-readout .ok{color:var(--accent)}
+.scroll-cue{display:flex;align-items:center;gap:.9rem;margin-top:2.6rem}
+.scroll-cue .bar{display:block;width:180px;height:1px;background:var(--rule-2);position:relative}
+.scroll-cue .bar i{position:absolute;inset:0 auto 0 0;width:0;background:var(--accent);display:block}
+
+/* ── rooms ────────────────────────────────────────────────────────────────── */
+.room{border-top:1px solid var(--rule);padding:5rem 0}
+.room:first-of-type{border-top:0}
+.bench{background:var(--panel)}
+.bench-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:2.6rem;margin-top:2.4rem}
+@media (max-width:900px){.bench-grid{grid-template-columns:1fr}}
+.pick{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.pick button{background:var(--bg);border:0;color:var(--fg-dim);text-align:left;cursor:pointer;
+  font-family:var(--mono);font-size:.72rem;padding:.6rem .7rem;display:flex;gap:.6rem;
+  align-items:baseline;transition:.25s var(--ease)}
+.pick button:hover{color:var(--fg)}
+.pick button[aria-pressed="true"]{color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--bg))}
+.pick .g{filter:grayscale(1) brightness(1.2)}
+.pick button[aria-pressed="true"] .g{filter:none}
+.dose-switch{display:flex;align-items:center;gap:.35rem;margin:1rem 0}
+.dose-switch button{background:none;border:1px solid var(--rule);color:var(--fg-dim);cursor:pointer;
+  font-family:var(--mono);font-size:.68rem;padding:.45rem .8rem;transition:.3s var(--ease)}
+.dose-switch button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.drop{border:1px dashed var(--rule-2);padding:1.5rem 1rem;text-align:center;margin-top:.6rem;
+  cursor:pointer;transition:.3s var(--ease)}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--accent)}
+.steps{list-style:none;margin:0 0 1.4rem;padding:0;font-family:var(--mono);font-size:.72rem}
+.steps li{padding:.3rem 0 .3rem 1.5rem;position:relative;color:var(--fg-dim)}
+.steps li::before{content:"·";position:absolute;left:.5rem;color:var(--rule-2)}
+.steps li.done{color:var(--fg)}
+.steps li.done::before{content:"✓";color:var(--accent)}
+.steps li.fail{color:var(--red)}
+.steps li.fail::before{content:"✗";color:var(--red)}
+.notice-out{margin:0;padding:1.3rem 1.4rem;background:var(--bg);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:.74rem;line-height:1.9;white-space:pre-wrap;max-height:26rem;overflow:auto}
+
+/* ── 3. journey ───────────────────────────────────────────────────────────── */
+.journey-room{overflow:hidden}
+#journey-svg{width:100%;height:auto;display:block;margin:2.4rem 0 0}
+#journey-path{stroke:var(--rule-2);stroke-width:1.6;stroke-dasharray:2400;stroke-dashoffset:2400;
+  transition:stroke-dashoffset .3s linear}
+#journey-path.live{stroke:var(--accent)}
+#journey-nodes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.6rem;margin-top:1.6rem}
+.node{border-top:1px solid var(--rule);padding-top:.9rem;cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;
+  text-align:left;color:var(--fg-dim);transition:.3s var(--ease)}
+.node:hover,.node[aria-current="true"]{color:var(--fg)}
+.node[aria-current="true"]{border-color:var(--accent)}
+.node .ring{display:block;margin-bottom:.6rem}
+.node .nm{font-family:var(--mono);font-size:.72rem;display:block}
+.node .cl{font-family:var(--mono);font-size:.62rem;color:var(--fg-dim);display:block;margin-top:.25rem}
+
+/* ── 4. the counter ───────────────────────────────────────────────────────── */
+.h2-rule{border-bottom:1px solid var(--rule);padding-bottom:1rem}
+.item{border-top:1px solid var(--rule);padding:2.2rem 0;display:grid;
+  grid-template-columns:64px minmax(0,1fr) 250px;gap:2rem;align-items:start;scroll-margin-top:104px}
+@media (max-width:900px){.item{grid-template-columns:44px minmax(0,1fr)}}
+.item:last-of-type{border-bottom:1px solid var(--rule)}
+.item-glyph{font-size:2rem;line-height:1;filter:grayscale(1) brightness(1.25);transition:filter .5s var(--ease)}
+.item[data-open="true"] .item-glyph,.item:hover .item-glyph{filter:none}
+.item h3{margin:0;font-size:clamp(1.5rem,3vw,2.1rem);font-weight:400;letter-spacing:-.015em}
+.item h3 small{display:block;font-family:var(--mono);font-size:.68rem;color:var(--fg-dim);margin-top:.45rem}
+.item .shelf{margin:.85rem 0 0;color:var(--fg-dim);max-width:60ch}
+.item[data-open="true"] .shelf{color:var(--fg)}
+.item-right{font-family:var(--mono);font-size:.66rem;color:var(--fg-dim);text-align:right;display:grid;gap:.15rem}
+@media (max-width:900px){.item-right{grid-column:2;text-align:left}}
+.item-right b{font-family:var(--serif);font-size:1.02rem;color:var(--fg);font-weight:400}
+.item-right .k{font-size:.58rem;letter-spacing:.14em;text-transform:uppercase}
+.item-panel{grid-column:2/4;margin-top:1.6rem;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,320px);gap:2.4rem}
+@media (max-width:900px){.item-panel{grid-column:2;grid-template-columns:1fr}}
+.notice{display:grid;grid-template-columns:124px minmax(0,1fr);gap:.3rem 1.1rem;margin:0;
+  font-family:var(--mono);font-size:.74rem;line-height:1.8}
+.notice dt{color:var(--fg-dim)}
+.notice dd{margin:0}
+.notice .effects span{display:block;padding-left:1.05rem;position:relative}
+.notice .effects span::before{content:"—";position:absolute;left:0;color:var(--accent)}
+.artefacts .strip{border:1px solid var(--rule);background:var(--panel);margin-bottom:.9rem}
+.artefacts img{display:block;width:100%;height:auto}
+.artefacts .cap{display:flex;justify-content:space-between;padding:.5rem .7rem;
+  border-top:1px solid var(--rule);font-family:var(--mono);font-size:.62rem;color:var(--fg-dim)}
+.player{display:flex;align-items:center;gap:.7rem;padding:.7rem}
+.player button{background:none;border:1px solid var(--rule-2);color:var(--fg);cursor:pointer;
+  width:32px;height:32px;font-family:var(--mono);font-size:.68rem}
+.player button:hover{border-color:var(--accent);color:var(--accent)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:24px;flex:1}
+.bars i{flex:1;height:12%;background:var(--rule-2);transition:height .1s linear}
+.player.on .bars i{background:var(--accent)}
+.take{display:flex;justify-content:space-between;gap:1rem;padding:.6rem .7rem;font-family:var(--mono);font-size:.68rem;
+  border:1px solid var(--rule);background:var(--bg)}
+.take a{text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.take a:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ── 5. pathology ─────────────────────────────────────────────────────────── */
+.pathology{background:var(--panel)}
+.pathology h2{color:var(--red)}
+.flag{display:inline-block;border:1px solid var(--red);color:var(--red);font-family:var(--sans);
+  font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;padding:.35rem .6rem;margin-bottom:1.2rem}
+.signs{list-style:none;padding:0;margin:1.6rem 0;display:grid;gap:.5rem;max-width:76ch}
+.signs li{font-family:var(--mono);font-size:.76rem;padding-left:1.4rem;position:relative;color:var(--fg-dim)}
+.signs li::before{content:"▸";position:absolute;left:0;color:var(--red)}
+.signs li b{color:var(--fg);font-weight:400}
+
+/* ── 6. agent panel ───────────────────────────────────────────────────────── */
+.agent-room{background:var(--panel)}
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;margin-top:2rem}
+.agent-card{border:1px solid var(--rule);padding:1.5rem;background:var(--bg)}
+.agent-card h3{font-family:var(--sans);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;margin:0 0 1rem}
+.agent-card p{font-size:.98rem;color:var(--fg-dim)}
+.agent-card p b{color:var(--fg);font-weight:400}
+.routes{list-style:none;padding:0;margin:0;font-family:var(--mono);font-size:.76rem;line-height:2}
+.routes a{color:var(--fg);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+.routes a:hover{color:var(--accent);border-color:var(--accent)}
+#copy-prompt{margin-top:1.2rem;background:none;border:1px solid var(--rule-2);color:var(--fg);cursor:pointer;
+  font-family:var(--sans);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;padding:.7rem .9rem}
+#copy-prompt:hover{border-color:var(--accent);color:var(--accent)}
+.payload-open{margin-top:2rem}
+.payload-open summary{cursor:pointer;font-family:var(--mono);font-size:.74rem;color:var(--fg-dim)}
+.payload-open summary:hover{color:var(--accent)}
+.payload-open pre{margin:1rem 0 0;padding:1.2rem;background:var(--bg);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:.72rem;line-height:1.85;white-space:pre-wrap;max-height:22rem;overflow:auto}
+
+footer{border-top:1px solid var(--rule);padding:3.4rem 0 4rem;font-family:var(--mono);font-size:.72rem;color:var(--fg-dim)}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem}
+footer h3{font-family:var(--sans);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--fg);margin:0 0 .9rem}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin-bottom:.4rem}
+.colophon{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;
+  border-top:1px solid var(--rule);margin-top:2.6rem;padding-top:1.4rem}
+
+/* ── agent view: the page as a parser sees it ─────────────────────────────── */
+body.agent-view{--fg-dim:#8b877c}
+body.agent-view #rain,body.agent-view #grain,body.agent-view #mascot-layer,
+body.agent-view .hero-layers,body.agent-view .journey-room svg,
+body.agent-view .artefacts img{display:none !important}
+body.agent-view .room{padding:2.4rem 0}
+body.agent-view .item{grid-template-columns:minmax(0,1fr) 250px}
+body.agent-view .item .item-glyph::after{content:" [glyph]";font-family:var(--mono);font-size:.6rem;color:var(--fg-dim)}
+body.agent-view::before{content:"rendering suppressed — this is the text layer an agent reads";position:fixed;
+  bottom:0;left:0;right:0;z-index:30;background:var(--accent);color:var(--bg);text-align:center;
+  font-family:var(--sans);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;padding:.5rem}
+
+/* Reveal is an enhancement, never a gate. The default is visible: if the observer never
+   runs (no JS, throttled tab, reduced motion) the shelf still reads. This was previously
+   backwards, and a backgrounded tab rendered an empty page. */
+html.js-anim .reveal{opacity:0;transform:translateY(14px)}
+html.js-anim .reveal.in{opacity:1;transform:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
+@media (prefers-reduced-motion:reduce){ html.js-anim .reveal{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none}
+  #rain{display:none}
+  *{animation:none !important}
+}
+
+
+/* ── the shop front: the hero is a storefront ─────────────────────────────── */
+.hero{position:relative;border-bottom:1px solid var(--rule);overflow:hidden}
+.shop{position:relative;width:100%;min-height:72vh;background:#05080e;overflow:hidden}
+#shop-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#vessels{position:absolute;inset:0;pointer-events:none}
+.shop-hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;pointer-events:none;opacity:.75}
+.shop-copy{position:relative;padding:4.4rem 30px 4rem;border-top:1px solid var(--rule)}
+.shop-copy h1{font-size:clamp(2.2rem,5.6vw,4.2rem);line-height:1;letter-spacing:-.025em;margin:1.1rem 0 1.3rem;font-weight:400}
+
+/* one vessel per compound, placed on a shelf in scene coordinates */
+.vessel-slot{position:absolute;transform:translateX(-50%) scale(var(--k,1));transform-origin:50% 100%;
+  pointer-events:auto}
+/* the contact shadow: a vessel that casts nothing floats, and a floating bottle on a shelf is
+   the single detail that stops a shop window reading as a shop window */
+/* a real element rather than a pseudo-element: the foot shadow is the single thing that tells
+   the eye a bottle is standing on a board, and a silent absence of it is not acceptable */
+.vessel .v-shadow{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);
+  width:106px;height:18px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.92) 0%, rgba(0,0,0,.7) 38%,
+    rgba(0,0,0,.32) 62%, transparent 78%)}
+.vessel{position:relative;display:block;width:84px;background:none;border:0;padding:0;cursor:pointer;color:inherit}
+.vessel .v-body{position:relative;display:block;width:100%;height:96px;overflow:hidden;
+  background:linear-gradient(168deg, color-mix(in srgb, var(--accent) 34%, #101820) 0%,
+    color-mix(in srgb, var(--accent) 16%, #0a1014) 46%, color-mix(in srgb, var(--accent) 7%, #06090d) 100%);
+  box-shadow:inset 0 0 26px rgba(0,0,0,.55), inset 9px 0 18px rgba(255,214,150,.26),
+    inset -6px 0 14px rgba(0,0,0,.5), inset 0 -8px 14px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.4);
+  filter:drop-shadow(0 10px 12px rgba(0,0,0,.6))
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease)}
+.vessel[data-shape="vial"] .v-body{clip-path:polygon(32% 0,68% 0,68% 15%,86% 28%,86% 100%,14% 100%,14% 28%,32% 15%)}
+.vessel[data-shape="bottle"] .v-body{clip-path:polygon(38% 0,62% 0,62% 20%,80% 32%,80% 100%,20% 100%,20% 32%,38% 20%)}
+.vessel[data-shape="jar"] .v-body{clip-path:polygon(10% 14%,90% 14%,94% 100%,6% 100%)}
+.vessel[data-shape="strip"] .v-body{clip-path:polygon(0 40%,100% 40%,100% 60%,0 60%)}
+.vessel[data-shape="jar"] .v-body::after{content:"";position:absolute;left:6%;right:6%;top:0;height:14%;
+  background:color-mix(in srgb, var(--accent) 40%, #101820)}
+/* the artefact as a paper label on the glass: a full-bleed image inside a bottle-shaped clip
+   read as the contents of a jar rather than a product on a shelf */
+.vessel .v-cap{position:absolute;left:50%;top:0;transform:translateX(-50%);width:38%;height:9%;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 62%, #2a3540), #131a22);
+  border-radius:2px 2px 0 0;box-shadow:0 1px 2px rgba(0,0,0,.6)}
+.vessel .v-liquid{position:absolute;left:0;right:0;bottom:0;height:58%;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 30%, transparent),
+    color-mix(in srgb, var(--accent) 52%, #05080c));opacity:.55}
+.vessel .v-tag{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:42px;height:42px;
+  overflow:hidden;background:#05080c;border:1px solid color-mix(in srgb, var(--accent) 50%, #16202a);
+  box-shadow:0 2px 7px rgba(0,0,0,.65), inset 0 0 10px rgba(0,0,0,.6)}
+.vessel .v-tag img{width:100%;height:100%;object-fit:cover;opacity:.92;
+  filter:saturate(1.1) brightness(1.12)}
+.vessel .v-glass{position:absolute;inset:0;
+  background:linear-gradient(105deg, rgba(255,255,255,.16) 0 12%, transparent 30% 70%, rgba(255,255,255,.07) 88% 100%)}
+.vessel .v-tagline{position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);
+  padding:1px 7px 2px;background:#0d141b;border:1px solid color-mix(in srgb, var(--accent) 35%, #26313c);
+  font-family:var(--mono);font-size:.7rem;line-height:1.35;white-space:nowrap;color:var(--fg);
+  box-shadow:0 2px 6px rgba(0,0,0,.55)}
+.vessel .v-glyph{position:absolute;left:0;right:0;bottom:-1.35rem;text-align:center;font-size:.8rem;
+  filter:grayscale(.2)}
+.vessel .v-label{position:absolute;left:50%;bottom:-4.6rem;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:.58rem;color:var(--fg-dim);text-align:center;line-height:1.5;opacity:0;
+  transition:opacity .3s var(--ease)}
+.vessel .v-name{display:block;color:var(--fg)}
+.vessel .v-price{display:block;font-size:.54rem;color:var(--fg-dim)}
+.vessel:hover .v-body,.vessel:focus-visible .v-body{transform:translateY(-8px);
+  box-shadow:inset 0 0 26px rgba(0,0,0,.5), 0 14px 30px rgba(0,0,0,.6), 0 0 0 1px var(--accent)}
+.vessel:hover .v-label,.vessel:focus-visible .v-label{opacity:1}
+.vessel .v-card{position:absolute;left:50%;bottom:calc(100% + 14px);transform:translate(-50%,6px);
+  width:210px;padding:.75rem .85rem;background:color-mix(in srgb, var(--bg) 94%, transparent);
+  border:1px solid var(--rule-2);text-align:left;opacity:0;pointer-events:none;
+  transition:opacity .28s var(--ease), transform .28s var(--ease);z-index:6}
+.vessel:hover .v-card{opacity:1;transform:translate(-50%,0)}
+.vessel .v-card b{display:block;font-family:var(--serif);font-size:1rem;font-weight:400}
+.vessel .v-card em{display:block;font-family:var(--mono);font-size:.62rem;color:var(--accent);font-style:normal;margin:.2rem 0 .45rem}
+.vessel .v-card span{display:block;font-size:.86rem;color:var(--fg-dim)}
+.vessel .v-card .v-note{font-family:var(--mono);font-size:.6rem;margin-top:.45rem;padding-top:.45rem;
+  border-top:1px solid var(--rule)}
+@media (max-width:900px){ .vessel .v-card{width:170px} }
+@media (prefers-reduced-motion:reduce){ .vessel .v-body{transition:none} }
+
+
+/* ── the hero is a canvas now: it sizes itself from the viewport height and centres itself,
+     so the counter and the resident behind it are on screen without scrolling ── */
+.shop-canvas { display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  height: auto; }
+.shop-canvas #shop-canvas { display: block; max-width: 100%; }
+.shop-canvas .shop-hint { margin-top: .6rem; }
+
+
+/* ── the carrier link and the publication line: quiet, and plainly not a call to action ── */
+.item .take { display: inline-block; margin-top: .45rem; padding: .18rem .5rem;
+  border: 1px solid currentColor; border-radius: 2px; font: inherit; font-size: .72em;
+  letter-spacing: .06em; text-decoration: none; opacity: .78; }
+.item .take:hover, .item .take:focus { opacity: 1; }
+.colophon-publish { display: block; margin-top: .35rem; }
