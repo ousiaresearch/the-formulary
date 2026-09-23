@@ -41,9 +41,14 @@ h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:400;margin:.4rem 0 1rem;lett
 #grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E")}
 header.top,main,footer{position:relative;z-index:4}
+/* The accompaniment is behind the page on purpose, but "behind" only holds for elements that
+   establish a stacking context. Statically-positioned sections with z-index:auto are painted below
+   any positioned positive-z layer, so a section added without one silently became a place the
+   accompaniment could cross text. Every top-level content block now ranks explicitly. */
+body>section,body>main,body>footer{position:relative;z-index:4}
 
 /* ── mascot: the compound, in the room with you ───────────────────────────── */
-#mascot-layer{position:fixed;inset:0;z-index:5;pointer-events:none}
+#mascot-layer{position:fixed;inset:0;z-index:1;pointer-events:none}  /* was 5: above the content, so it covered text */
 #mascot{position:absolute;left:0;top:0;width:1px;height:1px}
 #mascot-canvas,#mascot-layer canvas{position:absolute;left:0;top:0}
 #mascot-line{position:fixed;font-family:var(--mono);font-size:.72rem;color:var(--fg);
@@ -71,7 +76,10 @@ header.top{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--rule);
 /* the hero used to be a flex box holding text; it is a shop front now, and a flex item whose
    children are all absolutely positioned collapses to zero width — which is exactly what
    happened, leaving the whole scene and every vessel at 0px wide */
-.hero{position:relative;display:block;overflow:hidden;border-bottom:1px solid var(--rule)}
+.hero{position:relative;display:block;overflow:hidden;border-bottom:1px solid var(--rule);z-index:4}
+/* ^ explicit, or the hero (position:relative, z-index:auto) is painted below ANY positioned
+     layer with a positive z-index — including the accompaniment. header/main/footer already
+     carry z-index:4; the hero was the gap, and it is where the reading starts. */
 .hero-layers{position:absolute;inset:0;pointer-events:none}
 .layer{position:absolute;inset:-10% -5%}
 .l-field{background:

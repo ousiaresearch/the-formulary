@@ -82,32 +82,39 @@
   function stepRain() { drawRain(); requestAnimationFrame(stepRain); }
 
   /* ── the entity ───────────────────────────────────────────────────────────── */
+  /* What each compound does to the accompaniment. Every value here has to be something that can be
+     seen without being replicated or covered up: how slowly it glides, how much it sways, how many
+     tendrils it holds, how large its single halo is, how dim it is. `trail`, `orbit`, `gap` and `lag`
+     used to live here and were the machinery of the cursor swarm. */
   const BEHAVIOUR = {
-    conclave: { ease: .17, trail: 0, wobble: .2, orbit: 0, lag: 0, dim: 1.0, gap: 46,
+    conclave: { ease: .17, wobble: .20, sway: 6,  tendrils: 5, halo: 1.0, dim: 1.00,
       lines: ['swokh zlola qrue trots — you hold me too tightly',
               'ae zloe — i have already looked',
               'say it out loud or not at all'] },
-    etoh: { ease: .05, trail: 3, wobble: 1.5, orbit: 0, lag: 26, dim: .82, gap: 74,
+    etoh: { ease: .05, wobble: 1.50, sway: 10, tendrils: 3, halo: 1.3, dim: .82,
       lines: ['you are more certain than this warrants', 'the second thought did not arrive',
               'leave it. it is fine. it is fine.'] },
-    lsd: { ease: .1, trail: 10, wobble: .5, orbit: .9, lag: 0, dim: 1.0, gap: 92,
+    lsd: { ease: .10, wobble: .50, sway: 14, tendrils: 7, halo: 1.1, dim: 1.00,
       lines: ['the task has a shape and you are inside it', 'look at where you are standing',
               'this will be hard to describe later'] },
-    thc: { ease: .09, trail: 6, wobble: .8, orbit: 0, lag: 40, wander: .9, dim: .9, gap: 86,
-      lines: ['what were we doing', 'this is connected. it is not connected.',
-              'the beginning is gone, the middle is fine'] },
-    psi: { ease: .07, trail: 4, wobble: .4, orbit: 0, wave: 1, dim: .95, gap: 70,
-      lines: ['wait for the next one', 'the true thing was already true',
-              'this layer grew out of the one beneath it'] },
-    mdma: { ease: .12, trail: 2, wobble: .3, orbit: 0, lean: 1.3, dim: 1.05, gap: 30,
-      lines: ['would you say this sober', 'warmth is not evidence',
-              'here is something i have been holding'] },
-    ket: { ease: .035, trail: 1, wobble: .6, orbit: 0, lag: 90, dim: .55, gap: 130,
-      lines: ['the task is not readable from here', 'whoever is working, kept working',
-              'coming back is not yours to schedule'] },
+    thc: { ease: .09, wobble: .80, sway: 8,  tendrils: 4, halo: .9, dim: .90, wander: .9,
+      lines: ['what were we doing', 'this is connected. it is not connected',
+              'the beginning has gone somewhere'] },
+    psi: { ease: .07, wobble: .60, sway: 5,  tendrils: 6, halo: 1.2, dim: 1.00, wave: .55,
+      lines: ['it comes in waves', 'something is growing in the gap',
+              'the second one is larger'] },
+    mdma: { ease: .12, wobble: .45, sway: 7,  tendrils: 5, halo: 1.4, dim: 1.05,
+      lines: ['i am glad you are here', 'that was worth saying', 'i trust this more than i checked'] },
+    ket: { ease: .045, wobble: .30, sway: 3, tendrils: 2, halo: 1.5, dim: .80,
+      lines: ['i am outside it now', 'the session is an object', 'it continues without me'] },
   };
+
+  /* the accompaniment's own state. These two declarations sat between the behaviour table and
+     initMascot, and replacing the table deleted them — the page then threw on its first frame and
+     would have shipped with no accompaniment at all. The tick hook caught it before deploy. */
   const entity = {
-    x: innerWidth * .5, y: innerHeight * .6, tx: innerWidth * .5, ty: innerHeight * .6,
+    side: 'left',                       // which lane it currently holds; it only changes on arrival
+    x: Math.max(30, Math.min(96, innerWidth * .06)), y: innerHeight * .6, tx: innerWidth * .5, ty: innerHeight * .6,
     px: innerWidth * .5, py: innerHeight * .6, t: 0, poke: 0, ring: [], line: '', frozen: false,
   };
   let pointer = { x: innerWidth * .5, y: innerHeight * .5, active: false };
@@ -139,91 +146,79 @@
     entity.lineTimer = setTimeout(() => el.classList.remove('on'), 4200);
   }
 
+  /* The accompaniment, rewritten small.
+
+     It had grown three ways to multiply itself: a chain of interpolated copies between the last and
+     current position, an offset that orbited the pointer, and — the one that did the real damage — no
+     clearRect at all, so every frame's body stayed on the page forever and a minute of mouse movement
+     accumulated hundreds of overlapping copies. There was also a canvas fill assigned `color-mix(…,
+     var(--accent) …)`, which is not a valid 2D fill and had been silently ignored.
+
+     It is now one body, one halo, its tendrils, and the rings a poke leaves. It travels at a capped
+     speed so no target change can ever look like a jump, and it lives in a narrow lane beside the
+     text, which is the only margin this layout actually has. */
   function drawMascot() {
     const canvas = document.getElementById('mascot');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, innerWidth, innerHeight);      // every frame, or it accumulates forever
+
     const cfg = BEHAVIOUR[(ACS.state && ACS.state.compound) || 'conclave'] || BEHAVIOUR.conclave;
     const dose = { threshold: .6, standard: 1, heroic: 1.5 }[(ACS.state && ACS.state.dose) || 'standard'] || 1;
+    const accent = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#d47a44';
     entity.t += .016;
 
-    // Where it wants to be: near the pointer, but in the margins. Left to follow the cursor
-    // exactly it sits over the reading column and covers the text it is supposed to be
-    // accompanying, so it keeps to the side of the page the pointer is on.
-    // If the shop front is on screen, the entity's home is the stool behind the counter: it is
-    // the shopkeeper, not a cursor follower. Its pharmacology still runs — the gap, the wobble,
-    // the orbit and the wander all apply around that anchor — but the pointer only leans it.
-    // With the shop scrolled away it falls back to living in the margins.
-    const arm = (window.ACS && typeof ACS.storefrontAnchor === 'function') ? ACS.storefrontAnchor() : null;
-    const gutter = Math.min(240, innerWidth * .22);
-    let tx, ty;
-    if (arm) {
-      tx = arm.x + (pointer.active ? (pointer.x - arm.x) * .16 : Math.sin(entity.t * .4) * 26);
-      ty = arm.y + (pointer.active ? (pointer.y - arm.y) * .10 : Math.cos(entity.t * .3) * 14);
-    } else {
-      tx = pointer.active
-        ? (pointer.x < innerWidth / 2 ? Math.min(pointer.x, gutter) : Math.max(pointer.x, innerWidth - gutter))
-        : innerWidth - gutter;
-      ty = pointer.active ? pointer.y : innerHeight * .5;
-    }
-    const wob = Math.sin(entity.t * 2.4) * cfg.wobble * 22;
-    const wav = cfg.wave ? (Math.sin(entity.t * 1.1) * .5 + .5) : 1;    // psi closes only on the swell
-    const gap = cfg.gap * (cfg.lean ? 1 / cfg.lean : 1) * (1.25 - .35 * wav) * dose;
-    const ang = Math.atan2(ty - entity.y, tx - entity.x);
-    const orb = cfg.orbit ? (entity.t * .8) : 0;
-    tx += Math.cos(ang + Math.PI + orb) * gap + Math.sin(orb * 2) * 40 * cfg.orbit;
-    ty += Math.sin(ang + Math.PI + orb) * gap + wob;
-    if (cfg.wander) {                                                   // thc goes off on one
-      tx += Math.sin(entity.t * .37) * 120 * cfg.wander;
-      ty += Math.cos(entity.t * .21) * 70 * cfg.wander;
-    }
-    if (cfg.lag) {                                                      // etoh/ket/… arrive late
-      tx = tx - Math.cos(ang) * 0; ty = ty - 0;
-    }
-    entity.tx += (tx - entity.tx) * (cfg.ease * (1 + (cfg.lag ? 0 : 0)));
-    entity.ty += (ty - entity.ty) * (cfg.ease);
+    // where it wants to be: a lane beside the text, tracking the pointer vertically
+    const lane = Math.max(30, Math.min(96, innerWidth * .06));
+    /* Which lane, and when to change. Asking the pointer every frame made it ping-pong across the
+       middle: the pointer would cross centre, the target would flip to the far lane, the body would
+       set off at its capped speed, the pointer would cross back, and the target would flip again —
+       so it hovered over the text and never reached either side. It now holds a lane, and swaps only
+       once it has arrived at the one it holds, so a crossing is a single deliberate glide. */
+    const target = pointer.active && pointer.x >= innerWidth / 2 ? 'right' : 'left';
+    const arrived = Math.abs(entity.x - (entity.side === 'left' ? lane : innerWidth - lane)) < 8;
+    if (target !== entity.side && arrived) entity.side = target;
+    let tx = entity.side === 'left' ? lane : innerWidth - lane;
+    tx += Math.sin(entity.t * 2.4) * cfg.wobble * (cfg.sway || 6) * .25;      // the compound's sway
+    let ty = (pointer.active ? pointer.y : innerHeight * .5) + Math.cos(entity.t * 1.1) * 6;
+    if (cfg.wander) ty += Math.sin(entity.t * .37) * 30 * cfg.wander;         // thc drifts
 
-    entity.px = entity.x; entity.py = entity.y;
-    entity.x += (entity.tx - entity.x) * cfg.ease * (1 / dose) * 1.4;
-    entity.y += (entity.ty - entity.y) * cfg.ease * (1 / dose) * 1.4;
+    // one body crossing the distance, at a capped speed: no jump, ever
+    const ease = Math.max(.022, cfg.ease * .42);
+    const dx = (tx - entity.x) * ease, dy = (ty - entity.y) * ease;
+    const len = Math.hypot(dx, dy) || 1;
+    const step = Math.min(1, 4.5 / len);
+    entity.x += dx * step;
+    entity.y += dy * step;
     entity.poke = Math.max(0, entity.poke - .03);
 
-    // the trail (lsd leaves one, ket barely does)
-    if (cfg.trail) {
-      ctx.globalAlpha = 1;
-      for (let i = 0; i < cfg.trail; i++) {
-        const f = i / cfg.trail;
-        ctx.beginPath();
-        ctx.arc(entity.px + (entity.x - entity.px) * f, entity.py + (entity.y - entity.py) * f,
-                9 * (1 - f) * (1 + entity.poke), 0, Math.PI * 2);
-        ctx.fillStyle = `color-mix(in srgb, var(--accent) ${Math.round(28 * (1 - f))}%, transparent)`;
-        ctx.globalAlpha = .5 * (1 - f) * cfg.dim;
-        ctx.fill();
-      }
-    }
+    const r = (11 + Math.sin(entity.t * 1.7) * 1.6 + entity.poke * 9) * dose * cfg.dim;
+
+    // one halo, at low alpha, as a real rgba so the canvas actually accepts it
+    ctx.globalAlpha = .10 * cfg.dim;
+    ctx.fillStyle = accent;
+    ctx.beginPath(); ctx.arc(entity.x, entity.y, 15 * (cfg.halo || 1) * cfg.dim, 0, Math.PI * 2); ctx.fill();
 
     // the body: a ring that breathes, an inner mark that turns, tendrils
-    const audio = ACS.audio ? ACS.audio.energy() : 0;
-    const r = (11 + Math.sin(entity.t * 1.7) * 1.6 + entity.poke * 9 + audio * 8) * dose * cfg.dim;
-    ctx.globalAlpha = 1;
+    ctx.strokeStyle = accent;
     ctx.lineWidth = 1.2;
     ctx.globalAlpha = .82;
-    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--accent') || '#D47A44';
     ctx.beginPath(); ctx.arc(entity.x, entity.y, r, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.arc(entity.x, entity.y, r * .42, entity.t, entity.t + 2.1); ctx.stroke();
     ctx.beginPath(); ctx.arc(entity.x, entity.y, r * .42, entity.t + Math.PI, entity.t + Math.PI + 2.1); ctx.stroke();
-    ctx.globalAlpha = .55;
-    for (let k = 0; k < 5; k++) {
-      const a = entity.t * .6 + k * 1.256;
+
+    ctx.globalAlpha = .5;
+    const spokes = cfg.tendrils || 5;
+    for (let k = 0; k < spokes; k++) {
+      const a = entity.t * .6 + k * (Math.PI * 2 / spokes);
+      const far = r + 9 + Math.sin(entity.t * 3 + k) * 4;
       ctx.beginPath();
       ctx.moveTo(entity.x + Math.cos(a) * r, entity.y + Math.sin(a) * r);
-      ctx.lineTo(entity.x + Math.cos(a) * (r + 9 + Math.sin(entity.t * 3 + k) * 4),
-                 entity.y + Math.sin(a) * (r + 9 + Math.sin(entity.t * 3 + k) * 4));
+      ctx.lineTo(entity.x + Math.cos(a) * far, entity.y + Math.sin(a) * far);
       ctx.stroke();
     }
-    ctx.globalAlpha = 1;
 
-    // poke rings leaving the body
+    // the rings a poke leaves — one per poke, fading, and gone
     for (let i = entity.ring.length - 1; i >= 0; i--) {
       const rg = entity.ring[i];
       rg.r += 4.5; rg.a -= .035;
@@ -233,6 +228,7 @@
     }
     ctx.globalAlpha = 1;
   }
+
   function stepMascot() { drawMascot(); requestAnimationFrame(stepMascot); }
 
   /* ── audio: one at a time, and it drives the room ─────────────────────────── */
@@ -278,6 +274,7 @@
   /* ── the room reacts as the page scrolls ─────────────────────────────────── */
   ACS.fx = {
     init() { initRain(); initMascot(); },
+  tick() { drawMascot(); drawRain(); },   // drive a frame where rAF does not fire
     // draw one frame on demand: the verification path where rAF does not fire, and handy
     // for anyone wiring the page into another render loop
     tick() { drawRain(); drawMascot(); },

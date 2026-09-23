@@ -20,7 +20,11 @@
 
 <canvas id="rain" aria-hidden="true"></canvas>
 <div id="grain" aria-hidden="true"></div>
-<div id="mascot-layer" aria-hidden="true"><canvas id="mascot"></canvas><div id="mascot-line"></div></div>
+<!-- behind the content, like the rain: it can then never reduce the legibility of a single
+     line. the speech line is deliberately NOT in here — a child of a low z-index layer is
+     trapped behind the page with it, and that line has to be readable. -->
+<div id="mascot-layer" aria-hidden="true"><canvas id="mascot"></canvas></div>
+<div id="mascot-line" aria-hidden="true"></div>
 
 <header class="top">
   <div class="wrap top-row">
@@ -283,7 +287,7 @@ run. treat every effect claim on this page as a claim.
 </footer>
 
 <script src="assets/data.js"></script>
-<script src="js/fx.js"></script>
+<script src="js/fx.js?v=13"></script>
 <script src="js/decode.js"></script>
 <!-- the hero is the canvas shop; its art stack loads from renders/ so bottles, props, frames and
      mascot poses have one source of truth rather than a second copy here -->
