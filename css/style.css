@@ -330,3 +330,25 @@ html.js-anim .reveal.in{opacity:1;transform:none;transition:opacity .7s var(--ea
   letter-spacing: .06em; text-decoration: none; opacity: .78; }
 .item .take:hover, .item .take:focus { opacity: 1; }
 .colophon-publish { display: block; margin-top: .35rem; }
+
+
+/* ── the dispensary: one line of set and setting, then a pressing per compound ── */
+.dispensary { margin: 3rem auto 1rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,.12); }
+.dispensary h2 { font-size: 1.15rem; letter-spacing: .04em; margin-bottom: .5rem; }
+.set-setting { display: block; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+  opacity: .8; margin: 1.1rem 0 .3rem; }
+.set-setting input { display: block; width: min(46rem, 100%); margin-top: .45rem; padding: .5rem .65rem;
+  font: inherit; font-size: .95rem; color: inherit; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.2); border-radius: 2px; }
+.set-setting input:focus { outline: 1px solid currentColor; }
+.tiny.warn { opacity: .62; margin-top: .35rem; }
+.press-row { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0 .6rem; }
+button.press { padding: .42rem .7rem; font: inherit; font-size: .78rem; letter-spacing: .04em;
+  color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 2px;
+  opacity: .82; cursor: pointer; }
+button.press:hover:not(:disabled) { opacity: 1; }
+button.press:disabled { opacity: .4; cursor: progress; }
+.press-out .batch { font-family: ui-monospace, monospace; font-size: .82rem; }
+.press-out .checks { list-style: none; margin: .5rem 0 .3rem; padding: 0; font-size: .8rem; }
+.press-out .checks li { opacity: .8; }
+.press-out .checks li.no { opacity: 1; color: #e08a6a; }

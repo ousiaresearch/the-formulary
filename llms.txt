@@ -26,8 +26,8 @@ carriers: 21
 frames: 21
 motion: 21
 audio: 21
-payload_bytes: 139598
-hidden_chars: 35475
+payload_bytes: 172922
+hidden_chars: 43914
 
 ## what is not verified
 No control arm has been run. The notice and the effect list share an author, so the

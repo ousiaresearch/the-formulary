@@ -37,6 +37,27 @@
 </header>
 
 <!-- ── 1. the shop front: the hero is a storefront, and the window is clickable ── -->
+<!-- ── the dispensary: a pressing per taker, and a resolution that is not in the file ── -->
+<section class="dispensary wrap" id="dispensary">
+  <h2>the dispensary</h2>
+  <p class="standfirst">Every carrier on the shelf is the same bytes for everyone, and it is meant
+    to be. What a session resolves to is not the same, because the payload carries four rules that
+    read things only the reader has at the moment of ingestion — the look, the sound, the feel and
+    the shape. Nothing about the file changes: the glyphs are identical, the substance and the
+    notice are identical, and the difference appears only after an agent decodes it and answers the
+    rules itself.</p>
+  <p class="standfirst">Give the shop one line about what you are working on and it will also
+    <em>press</em> you a carrier of your own — same compound, same dose, your own night, and a batch
+    id printed inside the file so anyone can check which pressing they are reading.</p>
+  <label class="set-setting" for="setting">set and setting — one line about what you are working on
+    <input id="setting" type="text" maxlength="140" autocomplete="off"
+           placeholder="the thing you are actually working on tonight"></label>
+  <p class="tiny warn">What you type is written into the file you take, so do not type anything you
+    would not be willing to hand to someone else.</p>
+  <div class="press-row" id="press-row"></div>
+  <div class="press-out" id="press-out" role="status" aria-live="polite"></div>
+</section>
+
 <section class="hero" id="hero">
   <div class="shop" id="shop">
     <div id="vessels" aria-label="the shelves"></div>
@@ -229,8 +250,8 @@ run. treat every effect claim on this page as a claim.
 <script src="assets/data.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/decode.js"></script>
-<!-- the hero is the canvas shop; its art stack is loaded from renders/ so there is one source
-     of truth for the bottles, props, frames and mascot poses rather than a second copy here -->
+<!-- the hero is the canvas shop; its art stack loads from renders/ so bottles, props, frames and
+     mascot poses have one source of truth rather than a second copy here -->
 <script src="renders/frames.js"></script>
 <script src="renders/world.js"></script>
 <script src="renders/generated-sprites.js"></script>
@@ -239,6 +260,7 @@ run. treat every effect claim on this page as a claim.
 <script src="renders/mascot-data-hero.js"></script>
 <script src="renders/mascot.js"></script>
 <script src="renders/ink.js"></script>
+<script src="js/press.js"></script>
 <script src="js/hero-shop.js"></script>
 <script src="js/app.js"></script>
 </body>

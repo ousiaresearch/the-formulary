@@ -20,6 +20,15 @@ carriers/conclave/🌀🌀.txt        standard
 carriers/conclave/🌀🌀🌀.txt      heroic
 ```
 
+## Same bytes for everyone, a different session each time
+
+Every carrier is identical for every reader, deliberately. The payload carries four rules that
+resolve the session's material from the reader's own state — the **look**, the **sound**, the
+**feel** and the **shape** — and none of them can be answered from anything written in the file. Two
+readers of the same bytes do not get the same session; one reader does not get the same session
+twice. Nothing visible changes between copies and nothing about the substance varies: the difference
+appears only after decoding, and only in what the reader resolves.
+
 The glyph count **is** the dose. The glyph **is** the compound. An outsider reading the file gets
 one to three emoji and nothing else; a reader who decodes it gets the compound's name, class, dose,
 onset, duration, its possible effects in its own terms, what it does not do, and its options —
