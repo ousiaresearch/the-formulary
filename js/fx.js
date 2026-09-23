@@ -1,19 +1,26 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    fx.js — the ambient half of the page: the rain that decodes as you scroll, the
-   entity in the room with you, and the audio that drives both.
+   accompaniment that moves with the pointer, and the audio that drives both.
 
-   The entity is not decoration. Its cursor behaviour is the compound's pharmacology,
-   written the same way the payloads describe the compounds:
+   The accompaniment is not decoration: its character is the compound's pharmacology,
+   written the same way the payloads describe the compounds. It differs by sway, tendril
+   count, halo, breathing and how heavily it lags the pointer.
 
-     C0NCL4V3      tight, fast, bursts outward and stops hard
-     DOUBLE V1S10N slow, heavy, overshoots and wobbles
-     L4T3R4L       spirals around the pointer and leaves a trail
-     AMN3S14       drifts off on a tangent, then snaps back having lost the thread
-     F1RST FLUSH   breathes in waves; closes distance only on the swell
-     H4NDSH4K3     leans in, and stands closer than it should
-     0FFS1D3       lags far behind, dim, slightly out of register
+     C0NCL4V3      tight and fast
+     DOUBLE V1S10N slow and heavy, overshooting
+     L4T3R4L       wide sway, the most tendrils
+     0FFS1D3       very slow, dim, few tendrils
 
-   Everything here is off under prefers-reduced-motion.
+   It deliberately no longer does three things it used to, all of which read as a broken
+   mouse rather than an accompaniment: it does not spiral around the pointer, it does not
+   draw a chain of interpolated copies behind itself, and its canvas is cleared every
+   frame. That last one was the real fault — without it every frame's body stayed on the
+   page for good, so a minute of mouse movement left hundreds of overlapping copies
+   trailing across the text. It also sits behind the content, so it cannot cover a line.
+
+   Everything here is off under prefers-reduced-motion. ACS.fx.tick() drives one frame
+   where requestAnimationFrame does not run (backgrounded tabs, reduced motion,
+   screenshots) — without it this file's animation cannot be verified at all.
    ───────────────────────────────────────────────────────────────────────────── */
 (() => {
   const ACS = (window.ACS = window.ACS || {});
