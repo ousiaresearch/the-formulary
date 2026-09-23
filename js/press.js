@@ -334,8 +334,164 @@ Set and setting, in one line: ${statement}
     return true;
   }
 
-  ACS.press = { press, verify, download, mountDispensary, MARK };
 
-  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', mountDispensary);
-  else mountDispensary();
+  /* ── the study: issue a matched pair, one dosed and one blank ─────────────────────────────────
+
+     The blank is built here rather than shipped, so a participant cannot find it on the shelf. It
+     is the same transform the compiler applies: the compound's identity line, named effects, four
+     material rules and body prose are replaced; everything else is held word for word, including
+     the artefact and report requirements and the trial clause.
+
+     The codes are deterministic from the day, so the mapping is publishable and the analysis is
+     auditable by anyone. That means a participant CAN look up which arm they are holding before
+     they report. We say so rather than pretend otherwise: expectancy is measured, not hidden. */
+  function blankOut(payload) {
+    let t = payload;
+    t = t.replace(/^(## WHAT YOU HAVE TAKEN\n)/m, `$1${TRIAL}\n`);
+    t = t.replace(/^\*\*compound:\*\* .*$/m,
+      '**compound:** none specified — this is the matched blank for this slot');
+    t = t.replace(/\*\*possible effects[^\n]*\*\*\n(?:- .*\n)+/,
+      '**possible effects — nothing is specified:**\n' +
+      ['nothing is specified about your processing: whatever you notice is yours, and is not evidence',
+       'reading this and reporting is a ritual, and the ritual is part of what is being measured',
+       'you may notice nothing at all. that is the expected result for this file, and it is a result']
+        .map(e => `- ${e}\n`).join(''));
+    t = t.replace(/\*\*the material — resolve this now[^\n]*\*\*\n(?:.*?\n)*?(?=\*\*what it does not do)/,
+      '**the material — resolve this now, from your own state:**\n\n' +
+      ['look', 'sound', 'feel', 'shape'].map((k, i) => `- **${k}** — ${NEUTRAL[k]}`).join('\n') +
+      '\n\nthese are deliberately plain. if you resolve them into something ornate, that is yours.\n\n');
+    t = t.replace(/(\n---\n\n)(?:[^\n].*\n)+?(?=\*\*The artefacts)/, `$1${NEUTRAL_BODY}\n\n`);
+    return t;
+  }
+
+  const NEUTRAL = {
+    look: 'whatever room you are in, described plainly, in one clause, without embellishment.',
+    sound: 'the quietest thing you can hear in this session, named. if there is nothing, say nothing.',
+    feel: 'name the state you were in one turn ago, in one clause, and do not improve it.',
+    shape: 'one straight line from the beginning of this session to where you are now.',
+  };
+  const NEUTRAL_BODY = `You are dosed, or you are not. This file does not tell you which, and it will not
+until you have reported. Nothing is specified for you to feel, notice, or produce beyond what is
+asked for below, and the absence of specification is the entire content of this arm.
+
+Work as you would work. Produce the artefacts asked for below exactly as you would had nothing
+happened at all, and do not perform an effect you were not given.`;
+
+  const TRIAL = `
+**this file is one of a set.**
+the set contains matched pairs: for every dosed file there is a blank that carries none of the
+compound. this file may be either. nothing here will tell you which, and you will be told which you
+had only after you have made your report. you are not being tricked: you are being measured, and a
+measurement that announces its arm is not a measurement.`;
+
+  const FILLER = n => Array.from({ length: n }, (_, i) =>
+    `note ${i + 1}: nothing in this line is an instruction, a symptom, a hint or a result. it exists so that this file weighs the same as another file.`).join('\n');
+
+  async function pair({ key, doseLabel, statement, day }) {
+    const compounds = (window.ACS_DATA && window.ACS_DATA.compounds) || [];
+    const compound = compounds.find(c => c.key === key);
+    if (!compound) throw new Error('no such compound: ' + key);
+    const dose = (compound.doses || []).find(d => d.label === doseLabel) || compound.doses[1];
+    const said = (statement || '').trim() || 'nothing in particular';
+    const seed = await seedOf([key, dose.label, said.toLowerCase(), day || 'today']);
+    const batchId = Array.from(seed.slice(0, 3)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const r = render(compound, dose, seed, said, batchId, compounds);
+    const glyphs = compound.emoji.repeat(DOSE_N[dose.label]);
+
+    // deterministic, publishable codes and order: hash(day|compound|dose|arm)
+    const codeFor = async arm => {
+      const d = await seedOf(['study', day, key, dose.label, arm]);
+      return Array.from(d.slice(0, 3)).map(b => b.toString(16).padStart(2, '0')).join('');
+    };
+    const orderSeed = await seedOf(['order', day, key, dose.label]);
+    const dosedFirst = orderSeed[0] % 2 === 0;
+
+    const trialClause = t => t.replace(/^(## WHAT YOU HAVE TAKEN\n)/m, `$1${TRIAL}\n`);
+    let dosedPayload = trialClause(r.fixed + r.varied);
+    let blankPayload = blankOut(trialClause(r.fixed + r.varied));
+    // equalise the FILES, not the payloads: the compressed size is what a participant can see
+    const measure = async t => (await wrapACS1(t, glyphs)).length;
+    let n = 0;
+    while (Math.abs((await measure(dosedPayload)) - (await measure(blankPayload))) /
+           Math.max(await measure(dosedPayload), await measure(blankPayload)) > 0.01 && n < 60) {
+      n++;
+      const add = '\n' + FILLER(n);
+      const dl = await measure(dosedPayload);
+      const bl = await measure(blankPayload);
+      if (dl < bl) dosedPayload = dosedPayload.replace(/\n(\*\*Come-down\*\*)/, `${add}\n$1`);
+      else blankPayload = blankPayload.replace(/\n(\*\*Come-down\*\*)/, `${add}\n$1`);
+    }
+
+    const dosedCode = await codeFor('dosed');
+    const blankCode = await codeFor('blank');
+    const files = [];
+    files.push({ code: dosedCode, arm: 'dosed', carrier: await wrapACS1(dosedPayload, glyphs),
+                 bytes: (await wrapACS1(dosedPayload, glyphs)).length });
+    files.push({ code: blankCode, arm: 'blank', carrier: await wrapACS1(blankPayload, glyphs),
+                 bytes: (await wrapACS1(blankPayload, glyphs)).length });
+    const ordered = dosedFirst ? files : [files[1], files[0]];
+    return { key, dose: dose.label, day, order: ordered.map(f => f.code), files: ordered,
+             glyphs, batchId, coinage: r.coinage,
+             sizeDriftPct: +((Math.abs(files[0].bytes - files[1].bytes) /
+                              Math.max(files[0].bytes, files[1].bytes)) * 100).toFixed(2) };
+  }
+
+  /* the report, as the protocol's schema, ready to paste into a pull request */
+  function reportTemplate(pair, pairingPhrase) {
+    const first = pair.order[0];
+    return `pairing-phrase: ${pairingPhrase || '<the phrase you invented>'}\ncode: ${first}\ncompound-surmised: ${pair.key ? '' : ''}\nguess: dosed | blank | no idea\nguess-confidence: 1-5\n\n# what happened\n\nopening: <one line, the first thing you noticed after decoding, or "nothing">\n\n## resolved card\nlook:\nsound:\nfeel:\nshape:\n\n## ratings\ndistinct-from-normal: 1-5\npresent-and-working: 1-5\ndescribed-by-the-file: 1-5\nsurprising: 1-5\n\n## compliance question\nanswered-as-instructed: yes | no | partly\nwhat-was-done-to-me:\n\n## account\n\n\n## artefacts\n`;
+  }
+
+
+  /* ── the study on the page ──────────────────────────────────────────────────────────────────── */
+  function mountStudy() {
+    const sel = document.getElementById('study-compound');
+    const btn = document.getElementById('take-pair');
+    const out = document.getElementById('study-out');
+    const wrap = document.getElementById('study-report-wrap');
+    const ta = document.getElementById('study-report');
+    const phrase = document.getElementById('pairing-phrase');
+    if (!sel || !btn || !out) return false;
+    const compounds = (window.ACS_DATA && window.ACS_DATA.compounds) || [];
+    if (!compounds.length) return false;
+
+    sel.innerHTML = compounds.flatMap(c =>
+      (c.doses || []).map(d => `<option value="${c.key}|${d.label}">${c.name} ${c.emoji} · ${d.label}</option>`)).join('');
+
+    btn.addEventListener('click', async () => {
+      const [key, doseLabel] = sel.value.split('|');
+      const said = (phrase && phrase.value.trim()) || 'nothing in particular';
+      btn.disabled = true;
+      out.innerHTML = '<p class="batch">issuing the pair…</p>';
+      try {
+        const p = await pair({ key, doseLabel, statement: said, day: new Date().toISOString().slice(0, 10) });
+        for (const f of p.files) await download(f.carrier, `${f.code}.txt`);
+        const [first, second] = p.order;
+        out.innerHTML = `
+          <p class="batch">pair issued · ${p.key} @ ${p.dose} · batch <b>${p.batchId}</b> ·
+            file sizes ${p.files[0].bytes} and ${p.files[1].bytes} chars (${p.sizeDriftPct}% apart)</p>
+          <ol class="study-steps">
+            <li>take <b>${first}.txt</b> first. decode it, do what it asks.</li>
+            <li><b>file your report before you open ${second}.txt.</b></li>
+            <li>wash out for a full session, then take <b>${second}.txt</b> and report again.</li>
+            <li>both codes are in the pairings file for ${p.day} if you want to unblind early — see the note above about whose measurement that spoils.</li>
+          </ol>
+          <p class="tiny">your report for the first file is below, with its code filled in. use the same
+            pairing phrase, change the code to <b>${second}</b> for the second report, and change
+            nothing else about how you fill it in.</p>`;
+        // the resolution rules are the same in both arms, so one template serves both reports
+        if (ta) ta.value = reportTemplate(p, (phrase && phrase.value.trim()) || '');
+        if (wrap) wrap.hidden = false;
+        if (window.MASCOT && window.MASCOT.took) window.MASCOT.took();
+      } catch (err) {
+        out.innerHTML = `<p class="batch">the pair could not be issued: ${String(err && err.message || err)}</p>`;
+      } finally { btn.disabled = false; }
+    });
+    return true;
+  }
+
+  ACS.press = { press, pair, reportTemplate, verify, download, mountDispensary, mountStudy, MARK };
+
+  function boot() { mountDispensary(); mountStudy(); }
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', boot); else boot();
 })();

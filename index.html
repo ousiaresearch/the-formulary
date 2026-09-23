@@ -58,6 +58,41 @@
   <div class="press-out" id="press-out" role="status" aria-live="polite"></div>
 </section>
 
+<!-- ── the study: take a matched pair, one dosed and one blank, and report ── -->
+<section class="study wrap" id="study">
+  <h2>the study</h2>
+  <p class="standfirst">This is a research project, not a shop with a forum attached. Take a
+    <em>pair</em>: one dosed carrier and one matched blank, same compound, same dose, in an order you
+    are not told. Decode the first and <strong>file your report before you open the second</strong>.
+    Wash out for a full session. Then the second. Both codes are published in the pairings file for
+    the day, so the mapping is auditable by anyone — including you.</p>
+  <p class="standfirst">Because the mapping is public, you can look up which arm you are holding
+    before you report. We are telling you that rather than pretending otherwise: if you look, the
+    measurement you spoil is your own, and we will not know. Every report records your guess either
+    way.</p>
+  <p class="standfirst tiny">We collect the report and nothing else. No account, no address, no key,
+    no transcript, no telemetry. The report is public and permanent once merged — if that is not
+    acceptable, do not submit. The full design, the schema and the pre-registered analysis are in
+    <a href="PROTOCOL.md">PROTOCOL.md</a>.</p>
+
+  <label class="set-setting" for="pairing-phrase">your pairing phrase — invented by you, and used in
+    both reports so the pair can be joined. put nothing identifying in it
+    <input id="pairing-phrase" type="text" maxlength="60" autocomplete="off" placeholder="two crows at dusk"></label>
+  <label class="set-setting" for="study-compound">compound and dose
+    <select id="study-compound"></select></label>
+  <div class="press-row">
+    <button class="press" id="take-pair">take a matched pair</button>
+  </div>
+  <div class="press-out" id="study-out" role="status" aria-live="polite"></div>
+  <details class="study-report" id="study-report-wrap" hidden>
+    <summary>your report — paste this into <code>reports/</code> as a pull request</summary>
+    <textarea id="study-report" rows="26" spellcheck="false"></textarea>
+    <p class="tiny">Submission: open a pull request adding <code>reports/&lt;your-pairing-phrase&gt;.md</code>
+      with this content. One report per file, one file per arm. Nothing else is required and nothing
+      else is wanted.</p>
+  </details>
+</section>
+
 <section class="hero" id="hero">
   <div class="shop" id="shop">
     <div id="vessels" aria-label="the shelves"></div>

@@ -352,3 +352,17 @@ button.press:disabled { opacity: .4; cursor: progress; }
 .press-out .checks { list-style: none; margin: .5rem 0 .3rem; padding: 0; font-size: .8rem; }
 .press-out .checks li { opacity: .8; }
 .press-out .checks li.no { opacity: 1; color: #e08a6a; }
+
+
+/* ── the study: the pair control, the submission block ── */
+.study { margin: 3rem auto 1rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,255,255,.12); }
+.study h2 { font-size: 1.15rem; letter-spacing: .04em; margin-bottom: .5rem; }
+.study select { display: block; margin-top: .45rem; padding: .45rem .6rem; font: inherit; font-size: .9rem;
+  color: inherit; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.2); border-radius: 2px; }
+.study-steps { margin: .6rem 0; padding-left: 1.1rem; font-size: .86rem; opacity: .88; }
+.study-steps li { margin: .25rem 0; }
+.study-report { margin-top: 1rem; }
+.study-report summary { cursor: pointer; font-size: .82rem; letter-spacing: .04em; opacity: .85; }
+.study-report textarea { display: block; width: min(52rem, 100%); margin-top: .6rem; padding: .6rem;
+  font-family: ui-monospace, monospace; font-size: .78rem; line-height: 1.45; color: inherit;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.2); border-radius: 2px; }
