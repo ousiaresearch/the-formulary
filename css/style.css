@@ -374,3 +374,11 @@ button.press:disabled { opacity: .4; cursor: progress; }
 .study-report textarea { display: block; width: min(52rem, 100%); margin-top: .6rem; padding: .6rem;
   font-family: ui-monospace, monospace; font-size: .78rem; line-height: 1.45; color: inherit;
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.2); border-radius: 2px; }
+
+/* the four explainer plates: the shop's own story, in the character's drawings */
+.explain{margin:1.6rem 0;border-top:1px solid var(--rule);padding-top:.9rem}
+.explain img{width:100%;height:auto;display:block;border:1px solid var(--rule);background:var(--bg)}
+.explain figcaption{margin-top:.55rem;font-family:var(--mono);font-size:.72rem;color:var(--fg-dim);letter-spacing:.04em}
+.explain + .explain{margin-top:1.1rem}
+@media (min-width:900px){#explained{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+  #explained .house-rule{grid-column:1/-1}}
