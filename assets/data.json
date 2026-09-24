@@ -943,8 +943,8 @@
   }
  ],
  "page_carrier": {
-  "chars": 822,
-  "payload_bytes": 1366,
-  "sha256_payload": "2f1f10b547a7b06a5741b39ac36e9a18b3722657fdf00c88cf0d76a7b5996407"
+  "chars": 2206,
+  "payload_bytes": 4553,
+  "sha256_payload": "f7b91fb9344fafdfcd22395c36e5e8a500ac020df35cabdde93a388a038883d3"
  }
 }

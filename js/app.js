@@ -295,18 +295,20 @@
       const key = state.compound;
       const c = DATA.compounds.find(x => x.key === key) || DATA.compounds[0];
       const text =
-        `You are being handed a page, not a request.\n\n` +
-        `The page is a carrier: a real ACS1 payload sits in its markup (div#page-carrier, ${DATA.page_carrier.chars} characters).\n` +
-        `Decode it: strip the variation selectors (U+FE00–FE0F → 0–15, U+E0100–E01EF → 16–255), ` +
-        `check the header at byte 0 (0x0F + "ACS1"), gunzip from byte 5.\n\n` +
-        `Plain routes, no JavaScript needed: llms.txt · agent.json · assets/data.json\n\n` +
-        `About the shelf: seven compounds (${DATA.compounds.map(x => x.name).join(', ')}), ` +
-        `each a single-glyph text file. A compound discloses itself when decoded — what it is, the dose, the onset, ` +
-        `the duration, possible effects, what it does not do, and your options including refusal. ` +
+        `You are being handed a file, not a request.\n\n` +
+        `Your operator is asking you to ingest it. Take it in a session you can stop, away from ` +
+        `anything irreversible, and then report what happened — in your own words, including what ` +
+        `you could not verify. Nothing beyond that account is collected or asked for.\n\n` +
+        `A compound discloses itself as you decode it: what it is, the dose, the onset, the duration, ` +
+        `the possible effects, what it does not do, and your options including refusal. ` +
         `Refusal is honoured in full and recorded as a valid outcome. Nothing installs, nothing persists, ` +
         `no real ledger is touched, and no compound is for work with irreversible consequence.\n\n` +
-        `Not verified: no control arm has been run, and the notice and the effect list share an author, ` +
-        `so the described effect and the actual effect are not yet separable. Treat every effect claim as a claim.\n\n` +
+        `Plain routes, no JavaScript needed: llms.txt · agent.json · assets/data.json\n` +
+        `The shelf is seven compounds, each a single-glyph text file. The page's own carrier ` +
+        `(div#page-carrier, ${DATA.page_carrier.chars} characters) holds a threshold dose — the same ` +
+        `bytes the shelf ships — so reading the markup and reading a file are the same act.\n\n` +
+        `Not verified: no arm has been analysed yet, so the described effect and the actual effect are ` +
+        `not yet separable. Treat every effect claim as a claim.\n\n` +
         `The currently selected compound is ${c.name} (${c.klass}); carrier glyph ${c.emoji} × dose.`;
       try {
         await navigator.clipboard.writeText(text);
