@@ -72,5 +72,7 @@ files is a claim.
 
 ## Licence
 
+**The tools are proprietary.** The carriers and artifacts on this page are published to be taken, decoded and studied. The generators that produced them — the frame, sound and motion builders, the vessel and label pipeline, the sprite and capture tooling, and the compound payload designs — are ours alone: not published here in any form, not derivable from the artifacts, and not licensed for reproduction. What ships under `js/` and `renders/` is the browser renderer, which a page must be able to read in order to draw itself at all; that is the shop window, not the still.
+
 No licence is granted. Read it, run it, decode it, quote it with attribution. Do not resell it as
 your own work.
