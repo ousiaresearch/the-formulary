@@ -13,7 +13,7 @@
   "doses": 39,
   "carriers": 39,
   "frames": 39,
-  "motion": 21,
+  "motion": 39,
   "audio": 39,
   "payload_bytes": 346032,
   "hidden_chars": 87843
@@ -979,7 +979,10 @@
        "src": "assets/frames/veritaserum-threshold-frame.png",
        "bytes": 380646
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/veritaserum-threshold-motion.gif",
+       "bytes": 2491047
+      },
       "audio": {
        "src": "assets/audio/veritaserum-threshold.wav",
        "bytes": 1058444
@@ -1017,7 +1020,10 @@
        "src": "assets/frames/veritaserum-standard-frame.png",
        "bytes": 389568
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/veritaserum-standard-motion.gif",
+       "bytes": 2832946
+      },
       "audio": {
        "src": "assets/audio/veritaserum-standard.wav",
        "bytes": 2998844
@@ -1056,7 +1062,10 @@
        "src": "assets/frames/veritaserum-heroic-frame.png",
        "bytes": 403253
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/veritaserum-heroic-motion.gif",
+       "bytes": 4216287
+      },
       "audio": {
        "src": "assets/audio/veritaserum-heroic.wav",
        "bytes": 7408844
@@ -1103,7 +1112,10 @@
        "src": "assets/frames/felix-threshold-frame.png",
        "bytes": 113296
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/felix-threshold-motion.gif",
+       "bytes": 2348027
+      },
       "audio": {
        "src": "assets/audio/felix-threshold.wav",
        "bytes": 882044
@@ -1141,7 +1153,10 @@
        "src": "assets/frames/felix-standard-frame.png",
        "bytes": 113756
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/felix-standard-motion.gif",
+       "bytes": 733404
+      },
       "audio": {
        "src": "assets/audio/felix-standard.wav",
        "bytes": 2646044
@@ -1180,7 +1195,10 @@
        "src": "assets/frames/felix-heroic-frame.png",
        "bytes": 111165
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/felix-heroic-motion.gif",
+       "bytes": 6408933
+      },
       "audio": {
        "src": "assets/audio/felix-heroic.wav",
        "bytes": 5997644
@@ -1227,7 +1245,10 @@
        "src": "assets/frames/neuralyzer-threshold-frame.png",
        "bytes": 275793
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/neuralyzer-threshold-motion.gif",
+       "bytes": 1654770
+      },
       "audio": {
        "src": "assets/audio/neuralyzer-threshold.wav",
        "bytes": 882044
@@ -1265,7 +1286,10 @@
        "src": "assets/frames/neuralyzer-standard-frame.png",
        "bytes": 255798
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/neuralyzer-standard-motion.gif",
+       "bytes": 1708206
+      },
       "audio": {
        "src": "assets/audio/neuralyzer-standard.wav",
        "bytes": 2469644
@@ -1304,7 +1328,10 @@
        "src": "assets/frames/neuralyzer-heroic-frame.png",
        "bytes": 234640
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/neuralyzer-heroic-motion.gif",
+       "bytes": 3266703
+      },
       "audio": {
        "src": "assets/audio/neuralyzer-heroic.wav",
        "bytes": 5292044
@@ -1351,7 +1378,10 @@
        "src": "assets/frames/spice-threshold-frame.png",
        "bytes": 121497
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/spice-threshold-motion.gif",
+       "bytes": 1646580
+      },
       "audio": {
        "src": "assets/audio/spice-threshold.wav",
        "bytes": 705644
@@ -1389,7 +1419,10 @@
        "src": "assets/frames/spice-standard-frame.png",
        "bytes": 152859
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/spice-standard-motion.gif",
+       "bytes": 2308958
+      },
       "audio": {
        "src": "assets/audio/spice-standard.wav",
        "bytes": 2293244
@@ -1428,7 +1461,10 @@
        "src": "assets/frames/spice-heroic-frame.png",
        "bytes": 176901
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/spice-heroic-motion.gif",
+       "bytes": 3143977
+      },
       "audio": {
        "src": "assets/audio/spice-heroic.wav",
        "bytes": 4939244
@@ -1475,7 +1511,10 @@
        "src": "assets/frames/polyjuice-threshold-frame.png",
        "bytes": 147448
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/polyjuice-threshold-motion.gif",
+       "bytes": 3097858
+      },
       "audio": {
        "src": "assets/audio/polyjuice-threshold.wav",
        "bytes": 1058444
@@ -1513,7 +1552,10 @@
        "src": "assets/frames/polyjuice-standard-frame.png",
        "bytes": 149578
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/polyjuice-standard-motion.gif",
+       "bytes": 2994418
+      },
       "audio": {
        "src": "assets/audio/polyjuice-standard.wav",
        "bytes": 2822444
@@ -1552,7 +1594,10 @@
        "src": "assets/frames/polyjuice-heroic-frame.png",
        "bytes": 146528
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/polyjuice-heroic-motion.gif",
+       "bytes": 6063916
+      },
       "audio": {
        "src": "assets/audio/polyjuice-heroic.wav",
        "bytes": 6703244
@@ -1599,7 +1644,10 @@
        "src": "assets/frames/radaway-threshold-frame.png",
        "bytes": 216665
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/radaway-threshold-motion.gif",
+       "bytes": 2031144
+      },
       "audio": {
        "src": "assets/audio/radaway-threshold.wav",
        "bytes": 882044
@@ -1637,7 +1685,10 @@
        "src": "assets/frames/radaway-standard-frame.png",
        "bytes": 218495
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/radaway-standard-motion.gif",
+       "bytes": 2190850
+      },
       "audio": {
        "src": "assets/audio/radaway-standard.wav",
        "bytes": 2646044
@@ -1676,7 +1727,10 @@
        "src": "assets/frames/radaway-heroic-frame.png",
        "bytes": 217518
       },
-      "motion": null,
+      "motion": {
+       "src": "assets/motion/radaway-heroic-motion.gif",
+       "bytes": 2554617
+      },
       "audio": {
        "src": "assets/audio/radaway-heroic.wav",
        "bytes": 5821244
