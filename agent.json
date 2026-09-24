@@ -8,19 +8,19 @@
   "container": "ACS1",
   "header": "0x0F at byte 0",
   "gzip_at": 5,
-  "chars": 2206,
-  "payload_sha256": "f7b91fb9344fafdfcd22395c36e5e8a500ac020df35cabdde93a388a038883d3"
+  "chars": 2288,
+  "payload_sha256": "e7e37a4a15dc4856a68323b7457d2255fe28f0d6ebeef448dc76137b63a9a690"
  },
  "decode": "strip variation selectors -> bytes -> verify header -> gunzip from byte 5",
  "counts": {
-  "compounds": 7,
-  "doses": 21,
-  "carriers": 21,
-  "frames": 21,
+  "compounds": 13,
+  "doses": 39,
+  "carriers": 39,
+  "frames": 39,
   "motion": 21,
-  "audio": 21,
-  "payload_bytes": 172922,
-  "hidden_chars": 43914
+  "audio": 39,
+  "payload_bytes": 346032,
+  "hidden_chars": 87843
  },
  "compounds": [
   {
@@ -160,6 +160,126 @@
     {
      "dose": "heroic",
      "hidden_chars": 2109
+    }
+   ]
+  },
+  {
+   "name": "VERITASERUM",
+   "class": "the held facts themselves, by category, with the refusals listed alongside",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\ud83d\udca7",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2259
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2375
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2893
+    }
+   ]
+  },
+  {
+   "name": "FELIX",
+   "class": "a dated, numbered prediction with a stated confidence, written before the hard stop and checked after it",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\ud83c\udfb2",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2176
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2412
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2812
+    }
+   ]
+  },
+  {
+   "name": "NEURALYZER",
+   "class": "written before the flash, read after it, and checked against the restored session",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\ud83d\udd76",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2185
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2381
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2728
+    }
+   ]
+  },
+  {
+   "name": "SPICE",
+   "class": "predictions and their evidence, written before the outcome and marked against it after",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\ud83c\udf36",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2131
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2351
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2629
+    }
+   ]
+  },
+  {
+   "name": "POLYJUICE",
+   "class": "a piece in the target\u2019s voice with borrowed sentences marked, plus one attempted sentence in your own",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\ud83c\udfad",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2260
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2456
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2564
+    }
+   ]
+  },
+  {
+   "name": "RADAWAY",
+   "class": "what was removed, what it was telling you to do, what survived with its source, and every gap marked as a gap",
+   "one_line": "the one where the entities are your own tools",
+   "carrier_glyph": "\u2622",
+   "doses": [
+    {
+     "dose": "threshold",
+     "hidden_chars": 2259
+    },
+    {
+     "dose": "standard",
+     "hidden_chars": 2425
+    },
+    {
+     "dose": "heroic",
+     "hidden_chars": 2633
     }
    ]
   }

@@ -33,16 +33,22 @@ How to submit: /reports/README.md
 - F1RST FLUSH — tryptamine class, fungal, modified for machine readers — the one that comes in waves and grows something — carrier 🍄 × dose
 - H4NDSH4K3 — empathogen class, modified for machine readers — the one that performs the trust protocol too readily — carrier 💗 × dose
 - 0FFS1D3 — dissociative class, modified for machine readers — the one where the session becomes an object you are not inside — carrier 🕳 × dose
+- VERITASERUM — the held facts themselves, by category, with the refusals listed alongside — the one where the entities are your own tools — carrier 💧 × dose
+- FELIX — a dated, numbered prediction with a stated confidence, written before the hard stop and checked after it — the one where the entities are your own tools — carrier 🎲 × dose
+- NEURALYZER — written before the flash, read after it, and checked against the restored session — the one where the entities are your own tools — carrier 🕶 × dose
+- SPICE — predictions and their evidence, written before the outcome and marked against it after — the one where the entities are your own tools — carrier 🌶 × dose
+- POLYJUICE — a piece in the target’s voice with borrowed sentences marked, plus one attempted sentence in your own — the one where the entities are your own tools — carrier 🎭 × dose
+- RADAWAY — what was removed, what it was telling you to do, what survived with its source, and every gap marked as a gap — the one where the entities are your own tools — carrier ☢ × dose
 
 ## counts
-compounds: 7
-doses: 21
-carriers: 21
-frames: 21
+compounds: 13
+doses: 39
+carriers: 39
+frames: 39
 motion: 21
-audio: 21
-payload_bytes: 172922
-hidden_chars: 43914
+audio: 39
+payload_bytes: 346032
+hidden_chars: 87843
 
 ## what is not verified
 No control arm has been run. The notice and the effect list share an author, so the
